@@ -38,17 +38,26 @@ python generate_qr.py https://mental-wellbeing-agent.onrender.com
 
 ### Option 2: Railway.app (Also Free & Easy)
 
-**Step 1: Create Account**
+**Step 1: Remove runtime.txt (Important!)**
+- Railway doesn't need `runtime.txt` - it auto-detects Python
+- Delete `runtime.txt` file if it exists (it can cause `mise` errors)
+
+**Step 2: Create Account**
 - Go to https://railway.app
 - Sign up with GitHub
 
-**Step 2: Deploy**
+**Step 3: Deploy**
 1. Click "New Project"
 2. Select "Deploy from GitHub repo"
 3. Choose your repository
 4. Railway auto-detects Python and deploys
 
-**Step 3: Get URL**
+**Step 4: Configure (if needed)**
+If auto-detection doesn't work, go to Settings:
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `uvicorn app:app --host=0.0.0.0 --port=$PORT`
+
+**Step 5: Get URL**
 - Railway provides a URL like: `https://your-app.up.railway.app`
 - Generate QR code: `python generate_qr.py https://your-app.up.railway.app`
 

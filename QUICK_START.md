@@ -60,12 +60,21 @@ python generate_qr.py https://mental-wellbeing-agent.onrender.com
 
 ## 🔧 Alternative: Railway.app
 
+**Important:** `runtime.txt` file को delete कर दें (Railway auto-detect करता है)
+
 1. **https://railway.app** पर जाएं
 2. GitHub से login करें
 3. "New Project" → "Deploy from GitHub"
 4. Repository select करें
-5. Auto-deploy हो जाएगा!
+5. Railway automatically:
+   - Python version detect करेगा
+   - Dependencies install करेगा
+   - App start करेगा
 6. URL मिलेगा → QR code generate करें
+
+**Note:** अगर error आए तो Railway dashboard में:
+- Settings → Build Command: `pip install -r requirements.txt`
+- Settings → Start Command: `uvicorn app:app --host=0.0.0.0 --port=$PORT`
 
 ---
 
