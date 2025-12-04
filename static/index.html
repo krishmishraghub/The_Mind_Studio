@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mental Well-being Check-in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #0f172a;
+        color: #e5e7eb;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 3rem;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #f9fafb;
+      }
+      h2 {
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+        color: #bfdbfe;
+      }
+      p.description {
+        margin-bottom: 1.5rem;
+        color: #9ca3af;
+      }
+      .card {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: 1rem;
+        padding: 1.5rem 1.75rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+      }
+      .question {
+        margin-bottom: 1rem;
+        font-weight: 500;
+        color: #e5e7eb;
+      }
+      .options {
+        display: grid;
+        gap: 0.35rem;
+      }
+      .option-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.45rem;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.55rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.08s ease;
+      }
+      .option-label:hover {
+        background: rgba(55, 65, 81, 0.55);
+        transform: translateY(-1px);
+      }
+      .option-label input {
+        margin-top: 0.1rem;
+      }
+      .section-pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        margin-bottom: 0.4rem;
+        background: rgba(59, 130, 246, 0.08);
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.35);
+      }
+      .footer {
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+        color: #6b7280;
+      }
+      .submit-row {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .submit-row input {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid #4b5563;
+        background: rgba(15, 23, 42, 0.8);
+        color: #e5e7eb;
+        flex: 1;
+        min-width: 150px;
+      }
+      button {
+        padding: 0.6rem 1.4rem;
+        border-radius: 0.75rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.95rem;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+        color: #f9fafb;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
+        transition: transform 0.08s ease, box-shadow 0.08s ease,
+          filter 0.1s ease;
+      }
+      button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .result {
+        margin-top: 2rem;
+        padding: 1.5rem 1.75rem;
+        border-radius: 1rem;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(34, 197, 94, 0.4);
+      }
+      .result h3 {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        color: #bbf7d0;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+      }
+      .chip {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 9999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: #d1d5db;
+      }
+      .error {
+        margin-top: 0.75rem;
+        color: #fecaca;
+        font-size: 0.9rem;
+      }
+      .success {
+        margin-top: 0.75rem;
+        color: #bbf7d0;
+        font-size: 0.9rem;
+      }
+      .dim-row {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+      .bar {
+        margin-top: 0.25rem;
+        height: 6px;
+        border-radius: 9999px;
+        background: rgba(31, 41, 55, 0.9);
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #22c55e, #a855f7);
+      }
+      /* Modal/Popup Styles */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #1e293b;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+        position: relative;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .modal-header h2 {
+        margin: 0;
+        color: #f9fafb;
+        font-size: 1.75rem;
+      }
+      .close-btn {
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.5rem;
+        transition: background 0.2s, color 0.2s;
+      }
+      .close-btn:hover {
+        background: rgba(148, 163, 184, 0.2);
+        color: #e5e7eb;
+      }
+      .similarity-alert {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(168, 85, 247, 0.15));
+        border: 2px solid rgba(34, 197, 94, 0.4);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .similarity-alert h3 {
+        margin: 0 0 0.75rem 0;
+        color: #bbf7d0;
+        font-size: 1.25rem;
+      }
+      .similarity-alert p {
+        margin: 0.5rem 0;
+        color: #d1d5db;
+        font-size: 1rem;
+      }
+      .similar-names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-top: 0.75rem;
+      }
+      .similar-name-badge {
+        background: rgba(34, 197, 94, 0.2);
+        border: 1px solid rgba(34, 197, 94, 0.5);
+        color: #bbf7d0;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+      .profile-section {
+        margin-bottom: 1.5rem;
+      }
+      .profile-section h3 {
+        color: #bfdbfe;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+      }
+      .profile-section p {
+        color: #d1d5db;
+        line-height: 1.6;
+      }
+      @media (max-width: 640px) {
+        .card {
+          padding: 1.2rem 1.25rem;
+        }
+        h1 {
+          font-size: 1.5rem;
+        }
+        .modal-content {
+          padding: 1.5rem;
+        }
+        .modal-header h2 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mental Well-being Check-in</h1>
+      <p class="description">
+        Answer these short, multiple-choice reflections. The agent will create
+        an individual profile for you and quietly look for others whose
+        patterns feel very similar (90%+ matching responses).
+      </p>
+
+      <div class="card">
+        <div class="section-pill">Acknowledgement</div>
+        <div class="question">
+          1. If your mind had a weather forecast right now, what would it be?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="ack_1" value="0" />
+            Clear skies – mostly calm and steady.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_1" value="1" />
+            Partly cloudy – okay, with some worries in the background.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_1" value="2" />
+            Stormy – heavy, overwhelmed, or all over the place.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_1" value="3" />
+            Changing quickly – emotional ups and downs.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Acknowledgement</div>
+        <div class="question">
+          2. What do you tend to avoid or what drains your energy most?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="ack_2" value="0" />
+            Difficult emotions or conversations.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_2" value="1" />
+            Social situations or being around a lot of people.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_2" value="2" />
+            Resting or slowing down – I feel guilty when I do.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_2" value="3" />
+            I generally face things, but it still feels tiring.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Acknowledgement</div>
+        <div class="question">
+          3. This past year, how often do you recognize your own growth?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="ack_3" value="0" />
+            Rarely – I’m hard on myself and overlook progress.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_3" value="1" />
+            Sometimes – I notice small wins now and then.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_3" value="2" />
+            Often – I give myself credit for how far I’ve come.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ack_3" value="3" />
+            Very often – growth is something I actively reflect on.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Boundaries &amp; Priorities</div>
+        <div class="question">
+          4. What is something you might need to let go of, even if it scares
+          you?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="bp_1" value="0" />
+            A relationship, habit, or role that no longer feels good.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_1" value="1" />
+            Other people’s expectations of who I “should” be.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_1" value="2" />
+            The idea that I must handle everything alone.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_1" value="3" />
+            I’m not sure yet, but I feel something needs to change.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Boundaries &amp; Priorities</div>
+        <div class="question">
+          5. This week, how likely are you to protect time or energy for
+          yourself?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="bp_2" value="0" />
+            Not likely – I usually say yes even when I’m tired.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_2" value="1" />
+            A little – I might carve out a small pocket of time.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_2" value="2" />
+            Likely – I’m planning to set at least one clear boundary.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_2" value="3" />
+            Very likely – protecting my peace is a clear priority.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Boundaries &amp; Priorities</div>
+        <div class="question">
+          6. When stress spikes, which pattern feels most like you?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="bp_3" value="0" />
+            I shut down or numb out and avoid everything.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_3" value="1" />
+            I overwork, overthink, or try to fix everything at once.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_3" value="2" />
+            I reach out or use some coping skills, but it’s inconsistent.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="bp_3" value="3" />
+            I usually pause, feel, and respond in a way that supports me.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Growth &amp; Direction</div>
+        <div class="question">
+          7. As you move through college, how is your belief about yourself
+          changing?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="gd_1" value="0" />
+            I still believe I’m “not enough” most of the time.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_1" value="1" />
+            I’m slowly questioning old harsh stories about myself.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_1" value="2" />
+            I’m starting to see my strengths more clearly.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_1" value="3" />
+            I increasingly believe I’m capable and worthy as I am.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Growth &amp; Direction</div>
+        <div class="question">
+          8. Tiny moments that remind you life is worth showing up for feel…
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="gd_2" value="0" />
+            Hard to notice right now.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_2" value="1" />
+            Rare but meaningful when they do show up.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_2" value="2" />
+            Somewhat regular – I do notice small good moments.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_2" value="3" />
+            Frequent – small joys and connections feel very present.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Growth &amp; Direction</div>
+        <div class="question">
+          9. The direction or change you’re moving toward feels…
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="gd_3" value="0" />
+            Unclear – I mostly feel lost or stuck.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_3" value="1" />
+            Slow and shaky – I’m trying, but it’s confusing.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_3" value="2" />
+            Gradual – I can sense myself changing over time.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="gd_3" value="3" />
+            Intentional – I feel more and more aligned with who I am.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Relationships &amp; Communication</div>
+        <div class="question">
+          10. Thinking of who feels safest to you, how present does that safety
+          feel in your life?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="rc_1" value="0" />
+            I don’t really feel I have that kind of safety right now.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_1" value="1" />
+            It exists, but I struggle to reach for it.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_1" value="2" />
+            I can lean on that safety sometimes when I need it.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_1" value="3" />
+            It’s a strong, steady part of my life.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Relationships &amp; Communication</div>
+        <div class="question">
+          11. When is it hardest for you to ask for help?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="rc_2" value="0" />
+            Almost always – I hate feeling like a burden.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_2" value="1" />
+            When emotions are big or feel messy.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_2" value="2" />
+            When I think people are already busy.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_2" value="3" />
+            I can usually ask when I need to, even if it feels scary.
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-pill">Relationships &amp; Communication</div>
+        <div class="question">
+          12. How often do you feel understood without needing to explain
+          everything?
+        </div>
+        <div class="options">
+          <label class="option-label">
+            <input type="radio" name="rc_3" value="0" />
+            Almost never – I usually feel misunderstood or invisible.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_3" value="1" />
+            Sometimes – a few people “get” parts of me.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_3" value="2" />
+            Often – I have people who understand me fairly well.
+          </label>
+          <label class="option-label">
+            <input type="radio" name="rc_3" value="3" />
+            Very often – I feel deeply seen and understood.
+          </label>
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <input
+          id="participantId"
+          type="text"
+          placeholder="Enter your ID or initials"
+        />
+        <input
+          id="participantName"
+          type="text"
+          placeholder="Enter your name (optional)"
+        />
+        <button id="submitBtn">Submit responses</button>
+        <span id="status" class=""></span>
+      </div>
+
+      <div class="footer">
+        This tool is for reflection and pattern insight and does not replace
+        professional mental health support.
+      </div>
+    </div>
+
+    <!-- Results Modal Popup -->
+    <div id="resultsModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Your Mental Well-being Profile</h2>
+          <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        
+        <!-- Similarity Alert Section -->
+        <div id="similarityAlert" class="similarity-alert" style="display: none;">
+          <h3>🎯 Similar Response Pattern Detected!</h3>
+          <p><strong>You have similar response patterns on mental health</strong></p>
+          <p>The AI agent found participants with highly similar mental well-being profiles (90%+ match):</p>
+          <div id="similarNamesList" class="similar-names"></div>
+        </div>
+
+        <!-- Profile Summary Section -->
+        <div class="profile-section">
+          <h3>Your Profile Summary</h3>
+          <p id="modalSummary"></p>
+        </div>
+
+        <!-- Dimensions Section -->
+        <div class="profile-section">
+          <h3>Well-being Dimensions</h3>
+          <div id="modalDimensions"></div>
+        </div>
+
+        <!-- All Data Section -->
+        <div class="profile-section">
+          <h3>Profile Details</h3>
+          <div id="modalAllData"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Auto-detect API base URL based on current host
+      // Works for both localhost and deployed environments
+      const getApiBase = () => {
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        
+        // If running on same domain, use relative path
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          return port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}:8000`;
+        }
+        
+        // For deployed environments, use same origin
+        return port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
+      };
+      
+      const API_BASE = getApiBase();
+
+      function collectAnswers() {
+        const questionIds = [
+          "ack_1",
+          "ack_2",
+          "ack_3",
+          "bp_1",
+          "bp_2",
+          "bp_3",
+          "gd_1",
+          "gd_2",
+          "gd_3",
+          "rc_1",
+          "rc_2",
+          "rc_3",
+        ];
+
+        const answers = [];
+        for (const qid of questionIds) {
+          const selected = document.querySelector(
+            `input[name="${qid}"]:checked`
+          );
+          if (!selected) {
+            return { ok: false, missing: qid };
+          }
+          answers.push({
+            question_id: qid,
+            option_value: parseInt(selected.value, 10),
+          });
+        }
+        return { ok: true, answers };
+      }
+
+      async function submit() {
+        const statusEl = document.getElementById("status");
+        const modalEl = document.getElementById("resultsModal");
+        const modalSummaryEl = document.getElementById("modalSummary");
+        const modalDimsEl = document.getElementById("modalDimensions");
+        const modalAllDataEl = document.getElementById("modalAllData");
+        const similarityAlertEl = document.getElementById("similarityAlert");
+        const similarNamesListEl = document.getElementById("similarNamesList");
+        const btn = document.getElementById("submitBtn");
+
+        statusEl.textContent = "";
+        statusEl.className = "";
+
+        const participantId = document
+          .getElementById("participantId")
+          .value.trim();
+        if (!participantId) {
+          statusEl.textContent = "Please enter an ID or initials.";
+          statusEl.className = "error";
+          return;
+        }
+
+        const participantName = document
+          .getElementById("participantName")
+          .value.trim();
+
+        const collected = collectAnswers();
+        if (!collected.ok) {
+          statusEl.textContent =
+            "Please answer all questions before submitting.";
+          statusEl.className = "error";
+          return;
+        }
+
+        btn.disabled = true;
+        statusEl.textContent = "AI agent is analyzing your responses…";
+        statusEl.className = "";
+
+        try {
+          const res = await fetch(`${API_BASE}/api/submit`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              participant_id: participantId,
+              participant_name: participantName || null,
+              answers: collected.answers,
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error("Request failed");
+          }
+          const data = await res.json();
+
+          // Show similarity alert if matches found
+          const similar = data.highly_similar_participants || [];
+          if (similar.length > 0) {
+            similarityAlertEl.style.display = "block";
+            similarNamesListEl.innerHTML = "";
+            similar.forEach((s) => {
+              const badge = document.createElement("span");
+              badge.className = "similar-name-badge";
+              badge.textContent = `${s.participant_name || s.participant_id} (${s.similarity_percentage}% match)`;
+              similarNamesListEl.appendChild(badge);
+            });
+          } else {
+            similarityAlertEl.style.display = "none";
+          }
+
+          // Profile Summary
+          modalSummaryEl.textContent = data.profile.summary;
+
+          // Dimensions
+          modalDimsEl.innerHTML = "";
+          const dims = data.profile.dimensions || {};
+          for (const [key, value] of Object.entries(dims)) {
+            const pct = Math.round(value * 100);
+            const row = document.createElement("div");
+            row.className = "dim-row";
+            row.innerHTML = `
+              <div>${key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())} – ${pct}%</div>
+              <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+            `;
+            modalDimsEl.appendChild(row);
+          }
+
+          // All Data Section
+          modalAllDataEl.innerHTML = `
+            <div class="dim-row">
+              <strong>Participant ID:</strong> ${data.participant_id}
+            </div>
+            <div class="dim-row">
+              <strong>Participant Name:</strong> ${data.participant_name || "Not provided"}
+            </div>
+            <div class="dim-row">
+              <strong>Submission Time:</strong> ${new Date(data.submission_timestamp).toLocaleString()}
+            </div>
+            <div class="dim-row" style="margin-top: 1rem;">
+              <strong>Similar Matches Found:</strong> ${similar.length} participant(s) with ≥90% similarity
+            </div>
+            <div class="dim-row" style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">
+              Your profile snapshot has been stored for future comparison and analysis.
+            </div>
+          `;
+
+          // Show modal popup
+          modalEl.classList.add("active");
+          
+          // Scroll to top of modal
+          modalEl.scrollTop = 0;
+
+          statusEl.textContent = "Analysis complete! Check the results popup.";
+          statusEl.className = "success";
+        } catch (e) {
+          console.error(e);
+          statusEl.textContent =
+            "Something went wrong while submitting. Please try again.";
+          statusEl.className = "error";
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      // Close modal handlers
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("resultsModal").classList.remove("active");
+      });
+
+      document.getElementById("resultsModal").addEventListener("click", (e) => {
+        if (e.target.id === "resultsModal") {
+          document.getElementById("resultsModal").classList.remove("active");
+        }
+      });
+
+      // Submit button handler
+      document
+        .getElementById("submitBtn")
+        .addEventListener("click", () => submit());
+    </script>
+  </body>
+  </html>
+
+
