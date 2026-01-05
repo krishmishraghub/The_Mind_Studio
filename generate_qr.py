@@ -4,7 +4,20 @@ QR Code Generator for Mental Well-being Agent Frontend
 Generates a QR code that users can scan to access the questionnaire.
 """
 
-import qrcode
+import sys
+import os
+
+# Try to import qrcode, with helpful error message if missing
+try:
+    import qrcode
+except ImportError:
+    print("❌ Error: qrcode module not found!")
+    print("\n💡 Solution: Activate virtual environment first:")
+    print("   source .venv/bin/activate")
+    print("   python generate_qr.py <URL>")
+    print("\nOr install it:")
+    print("   pip install qrcode[pil]")
+    sys.exit(1)
 import sys
 import os
 from urllib.parse import urlparse

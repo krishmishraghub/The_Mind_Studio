@@ -9,6 +9,8 @@ venv/
 ENV/
 .venv/
 
+# Virtual environment (keep .venv in gitignore but create it locally)
+
 # QR Codes
 qr_code.png
 *.png

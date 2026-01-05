@@ -1,0 +1,10 @@
+# Netlify deployment configuration for NEST Cluster website
+[build]
+  publish = "."
+  command = ""
+
+[[redirects]]
+  from = "/*"
+  to = "/nest_cluster_index.html"
+  status = 200
+

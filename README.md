@@ -36,13 +36,21 @@ For detailed instructions, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
 
 ## 💻 Local Development Setup
 
-1. **Install dependencies**:
+1. **Create virtual environment** (recommended):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # On macOS/Linux
+# .venv\Scripts\activate   # On Windows
+```
+
+2. **Install dependencies**:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **Run the backend server**:
+3. **Run the backend server**:
 
 ```bash
 python app.py
@@ -50,9 +58,16 @@ python app.py
 
 The server starts on `http://0.0.0.0:8000` and serves both API and frontend.
 
-3. **Access the app**:
+4. **Access the app**:
    - Open `http://localhost:8000` in your browser
    - Frontend automatically connects to the backend
+
+5. **Generate QR Code** (after activating virtual environment):
+
+```bash
+source .venv/bin/activate  # If not already activated
+python generate_qr.py https://your-deployed-url.com
+```
 
 ### API Overview
 
@@ -105,8 +120,20 @@ When a participant submits responses, they immediately see:
 
 After deploying publicly:
 
+**Option 1: Using wrapper script (easiest)**
 ```bash
+./generate_qr.sh https://your-app.onrender.com
+```
+
+**Option 2: Activate virtual environment first**
+```bash
+source .venv/bin/activate
 python generate_qr.py https://your-app.onrender.com
+```
+
+**Option 3: Direct Python (if dependencies installed globally)**
+```bash
+python3 generate_qr.py https://your-app.onrender.com
 ```
 
 This creates `qr_code.png` that anyone can scan to access the questionnaire!
